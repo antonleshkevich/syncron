@@ -1,8 +1,11 @@
 #!/usr/bin/python3
 
-import os,sys,sync_catalogs,time_compare
+import os,sys,sync_catalogs,time_compare,shutil
 blocksize=1024*1024
 pid=''
+time1=0
+rechunc1=[]
+dirchunk1=[]
 
 def intersect(seq1,seq2):
 	return [item for item in seq1 if item in seq2]
@@ -32,8 +35,7 @@ def comparetrees(dir1,dir2,diffs,verbose=False):
 						print(name,'mathes')
 					break
 				if bytes1!=bytes2:
-					os.system('rm {0}'.format(path2))   #delete file from second catalog
-					os.system('cp {0} {1}'.format(path1,dir2))
+					shutil.copy2(path1,dir2)
 					diffs.append('file differ at %s - %s' % (path1,path2))
 					print(name,'DIFFERS')
 					break

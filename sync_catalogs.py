@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-import os,sys
+import os,sys,shutil
 
 def reportdiffs(unique1,unique2,dir1,dir2):
 	if not (unique1 or unique2):
@@ -10,20 +10,26 @@ def reportdiffs(unique1,unique2,dir1,dir2):
 			print('Files unique to', dir1)
 			for file in unique1:
 				temp=file
-				file=(dir1+'/'+'"'+file+'"')
+				file=(dir1+'/'+file)
 				if os.path.isdir(file):	
-					res=(dir2+'/'+'"'+temp+'"')
-					os.system('mkdir {0}'.format(res))
+					res=(dir2+'/'+temp)
+					try:
+						os.makedirs(res)
+					except OSError:
+						pass
 				else:
-					os.system('cp -R {0} {1}'.format(file,dir2))
+					shutil.copy(file,dir2)
 					print("!",file,dir2)
 			for file in unique1:
 				print('...',file)
 		if unique2:
 			for file in unique2:
 				temp=file
-				file=(dir2+'/'+'"'+file+'"')
-				os.system('rm -rf {0}'.format(file))
+				file=(dir2+'/'+file)
+				if os.path.isdir(file):
+					shutil.rmtree(file)
+				else:
+					os.remove(file)
 
 def difference(seq1,seq2):
 	return [item for item in seq1 if item not in seq2]
